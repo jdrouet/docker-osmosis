@@ -1,25 +1,15 @@
-name: build postgis docker images
+name: build osmosis docker images
 
-on:
-  push:
-    branches:
-      - '*'
-      - '!master'
+on: pull_request
 
 jobs:
   build-image:
-    name: build osmosis images and push
+    name: build osmosis image and test it
     runs-on: ubuntu-latest
 
     steps:
-      - name: install qemu
-        run: docker run --rm --privileged hypriot/qemu-register
-
       - name: checkout
         uses: actions/checkout@v2
 
-      - name: install buildx
-        run: make install-buildx
-
-      - name: build and push
-        run: make build-latest
+      - name: test image with real data
+        run: make test

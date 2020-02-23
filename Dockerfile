@@ -1,4 +1,4 @@
-FROM debian:buster AS fetcher
+FROM alpine:3.11 AS fetcher
 
 ARG OSMOSIS_VERSION=0.47
 
@@ -9,7 +9,7 @@ ADD https://bretth.dev.openstreetmap.org/osmosis-build/osmosis-${OSMOSIS_VERSION
 RUN tar xvf /osmosis/osmosis.tgz \
   && rm /osmosis/osmosis.tgz
 
-FROM openjdk:8-jre-slim-buster
+FROM alpine:3.11
 
 LABEL org.opencontainers.image.authors="Jeremie Drouet <jeremie.drouet@gmail.com>" \
   org.opencontainers.image.title="Osmosis" \
@@ -18,7 +18,10 @@ LABEL org.opencontainers.image.authors="Jeremie Drouet <jeremie.drouet@gmail.com
   org.opencontainers.image.url="https://hub.docker.com/r/jdrouet/osmosis" \
   org.opencontainers.image.source="https://github.com/jdrouet/docker-osmosis"
 
+RUN apk add --no-cache openjdk8-jre-base
+
 COPY --from=fetcher /osmosis /osmosis
 WORKDIR /osmosis
 
 ENTRYPOINT [ "/osmosis/bin/osmosis" ]
+CMD ["--help"]
